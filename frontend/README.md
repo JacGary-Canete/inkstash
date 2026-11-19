@@ -1,8 +1,18 @@
-# React + Vite
+cd C:\Users\l23y19w14\inkstash
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+$readme = @"
+# InkStash — Tattoo Artist Flash Booking & Deposit Platform
 
-Currently, two official plugins are available:
+Full-stack web application built with **React (Vite)**, **Java Spring Boot**, and **MySQL**, implementing User Account Creation, JWT Session Authentication, and Role-Based Access Control (RBAC) for `CLIENT` and `ARTIST` roles.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Prerequisites
+- **Java 17+**
+- **Node.js 20+** and **npm**
+- **MySQL 8.0+** running locally on port `3306`
+
+## 1. Database Setup
+1. Start your local MySQL server.
+2. Create the database:
+   ```sql
+   CREATE DATABASE IF NOT EXISTS inkstash_db;
