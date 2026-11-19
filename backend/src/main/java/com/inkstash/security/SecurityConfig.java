@@ -39,4 +39,16 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public org.springframework.security.core.userdetails.UserDetailsService userDetailsService(
+            com.inkstash.repository.UserRepository userRepository) {
+        return username -> userRepository.findByEmail(username)
+                .map(u -> org.springframework.security.core.userdetails.User
+                        .withUsername(u.getEmail())
+                        .password(u.getPasswordHash())
+                        .roles(u.getRole().name())
+                        .build())
+                .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException("User not found"));
+    }
 }
