@@ -49,8 +49,39 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  async function fetchProfile() {
+    const res = await fetch(`${API_BASE}/profile`, { credentials: "include" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to load profile");
+    return data;
+  }
+
+  async function updateProfile(payload) {
+    const res = await fetch(`${API_BASE}/profile`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to update profile");
+    setUser((prev) => (prev ? { ...prev, fullName: data.fullName } : prev));
+    return data;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, API_BASE }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        fetchProfile,
+        updateProfile,
+        API_BASE,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

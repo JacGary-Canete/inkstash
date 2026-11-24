@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import ProfileSection from "../components/ProfileSection";
 
 export default function ArtistDashboard() {
   const { user, logout, API_BASE } = useAuth();
@@ -9,11 +10,15 @@ export default function ArtistDashboard() {
   const [activeTab, setActiveTab] = useState("Manage Flash Catalog");
   const [rbacStatus, setRbacStatus] = useState("");
 
-  useEffect(() => {
+  const loadDashboard = useCallback(() => {
     fetch(`${API_BASE}/artist/dashboard`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => setDashboardData(data));
   }, [API_BASE]);
+
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
   async function handleLogout() {
     await logout();
@@ -56,19 +61,25 @@ export default function ArtistDashboard() {
           <span style={styles.badge}>ROLE: {user?.role}</span>
         </header>
 
-        <section style={styles.card}>
-          <h2>{activeTab}</h2>
-          <p><strong>Email:</strong> {user?.email}</p>
-          <p><strong>Studio Name:</strong> {dashboardData?.studioName || "Loading..."}</p>
-          <p>
-            <strong>Deposit Policy:</strong>{" "}
-            {dashboardData?.depositPercent != null ? `${dashboardData.depositPercent}% required` : "Not configured"}
-          </p>
-          <button onClick={testClientEndpoint} style={styles.testBtn}>
-            Verify Backend RBAC (Attempt Client Endpoint)
-          </button>
-          {rbacStatus && <p style={styles.rbacNote}>{rbacStatus}</p>}
-        </section>
+        {activeTab === "Studio Profile" ? (
+          <section style={styles.card}>
+            <ProfileSection onProfileSaved={loadDashboard} />
+          </section>
+        ) : (
+          <section style={styles.card}>
+            <h2>{activeTab}</h2>
+            <p><strong>Email:</strong> {user?.email}</p>
+            <p><strong>Studio Name:</strong> {dashboardData?.studioName || "Loading..."}</p>
+            <p>
+              <strong>Deposit Policy:</strong>{" "}
+              {dashboardData?.depositPercent != null ? `${dashboardData.depositPercent}% required` : "Not configured"}
+            </p>
+            <button onClick={testClientEndpoint} style={styles.testBtn}>
+              Verify Backend RBAC (Attempt Client Endpoint)
+            </button>
+            {rbacStatus && <p style={styles.rbacNote}>{rbacStatus}</p>}
+          </section>
+        )}
       </main>
     </div>
   );
