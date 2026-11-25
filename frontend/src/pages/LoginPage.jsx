@@ -55,6 +55,12 @@ export default function LoginPage() {
           required
         />
 
+        <div style={{ textAlign: "right" }}>
+          <Link to="/forgot-password" style={{ fontSize: "0.85rem", color: "#fda4af" }}>
+            Forgot password?
+          </Link>
+        </div>
+
         <button type="submit" disabled={submitting} style={styles.button}>
           {submitting ? "Signing in..." : "Sign In"}
         </button>

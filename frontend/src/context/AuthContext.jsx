@@ -69,6 +69,40 @@ export function AuthProvider({ children }) {
     return data;
   }
 
+  async function forgotPassword(email) {
+    const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to request password reset");
+    return data;
+  }
+
+  async function resetPassword(token, newPassword) {
+    const res = await fetch(`${API_BASE}/auth/reset-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, newPassword }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to reset password");
+    return data;
+  }
+
+  async function changePassword(currentPassword, newPassword) {
+    const res = await fetch(`${API_BASE}/auth/change-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to change password");
+    return data;
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -80,6 +114,9 @@ export function AuthProvider({ children }) {
         fetchProfile,
         updateProfile,
         API_BASE,
+        forgotPassword,
+        resetPassword,
+        changePassword,
       }}
     >
       {children}
