@@ -1,8 +1,11 @@
 package com.inkstash.controller;
 
 import com.inkstash.dto.AuthResponse;
+import com.inkstash.dto.ChangePasswordRequest;
+import com.inkstash.dto.ForgotPasswordRequest;
 import com.inkstash.dto.LoginRequest;
 import com.inkstash.dto.RegisterRequest;
+import com.inkstash.dto.ResetPasswordRequest;
 import com.inkstash.model.User;
 import com.inkstash.service.AuthService;
 import jakarta.validation.Valid;
@@ -15,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -54,6 +58,23 @@ public class AuthController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, buildAuthCookie("", Duration.ZERO).toString())
                 .build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
+        return ResponseEntity.ok(authService.requestPasswordReset(req));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@Valid @RequestBody ResetPasswordRequest req) {
+        return ResponseEntity.ok(authService.resetPassword(req));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody ChangePasswordRequest req) {
+        return ResponseEntity.ok(authService.changePassword(user, req));
     }
 
     @GetMapping("/me")

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import ProfileSection from "../components/ProfileSection";
 
 export default function ClientDashboard() {
   const { user, logout, API_BASE } = useAuth();
@@ -56,15 +57,21 @@ export default function ClientDashboard() {
           <span style={styles.badge}>ROLE: {user?.role}</span>
         </header>
 
-        <section style={styles.card}>
-          <h2>{activeTab}</h2>
-          <p><strong>Email:</strong> {user?.email}</p>
-          <p><strong>Account Status:</strong> Verified Client Session (HTTP-only JWT Cookie)</p>
-          <button onClick={testArtistEndpoint} style={styles.testBtn}>
-            Verify Backend RBAC (Attempt Artist Endpoint)
-          </button>
-          {rbacStatus && <p style={styles.rbacNote}>{rbacStatus}</p>}
-        </section>
+        {activeTab === "Account Settings" ? (
+          <section style={styles.card}>
+            <ProfileSection />
+          </section>
+        ) : (
+          <section style={styles.card}>
+            <h2>{activeTab}</h2>
+            <p><strong>Email:</strong> {user?.email}</p>
+            <p><strong>Account Status:</strong> Verified Client Session (HTTP-only JWT Cookie)</p>
+            <button onClick={testArtistEndpoint} style={styles.testBtn}>
+              Verify Backend RBAC (Attempt Artist Endpoint)
+            </button>
+            {rbacStatus && <p style={styles.rbacNote}>{rbacStatus}</p>}
+          </section>
+        )}
       </main>
     </div>
   );

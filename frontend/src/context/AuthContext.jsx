@@ -49,8 +49,76 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  async function fetchProfile() {
+    const res = await fetch(`${API_BASE}/profile`, { credentials: "include" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to load profile");
+    return data;
+  }
+
+  async function updateProfile(payload) {
+    const res = await fetch(`${API_BASE}/profile`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to update profile");
+    setUser((prev) => (prev ? { ...prev, fullName: data.fullName } : prev));
+    return data;
+  }
+
+  async function forgotPassword(email) {
+    const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to request password reset");
+    return data;
+  }
+
+  async function resetPassword(token, newPassword) {
+    const res = await fetch(`${API_BASE}/auth/reset-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, newPassword }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to reset password");
+    return data;
+  }
+
+  async function changePassword(currentPassword, newPassword) {
+    const res = await fetch(`${API_BASE}/auth/change-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || "Failed to change password");
+    return data;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, API_BASE }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        fetchProfile,
+        updateProfile,
+        API_BASE,
+        forgotPassword,
+        resetPassword,
+        changePassword,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
